@@ -13,8 +13,8 @@ OK - TDD approach
     - run test modules individually for quicker result
 - Unit testing
     - endpoints
-        - URL connection to the view
-        - self.view/self.view_name patterns
+OK        - URL connection to the view
+OK        - self.view/self.view_name patterns
         - view connection to serializer
             - what if there's different serializer for each method
         - simple request to each HTTP method
@@ -24,7 +24,7 @@ OK - TDD approach
     - serializers
         - test serializers
             - includes all the desired fields
-            - test the behaviour of each field separately 
+            - test the behaviour of each field separately
             - never compare the whole structure of the JSON object. This makes tests break unnecessarily for any changes on the serializer and  makes it hard to spot at what field the error occurred (show example)
             - test edge cases (numbers, dates, string sizes, sending an float to a decimal, sending a decimal to a float)
             - how to test file fields
@@ -37,7 +37,7 @@ OK - TDD approach
     - pagination
     - filtering
         - test_num_queries
-    - integration to external services 
+    - integration to external services
          - make sure they are easily mockeable functions)
          - use responses
          - vcrpy (https://github.com/kevin1024/vcrpy) (https://github.com/agriffis/vcrpy-unittest)

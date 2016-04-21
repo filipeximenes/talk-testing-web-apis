@@ -110,8 +110,9 @@
                     <h2>Unit testing</h2>
                     <h3>Endpoints</h3>
                 </section>
+
                 <section>
-                    <h3>Endpoints</h3>
+                    <h3>Endpoints <div class="status-red"></h3>
                     <p>Connecting endpoint to URL</p>
                     <pre><code data-trim>
 # test_endpoints.py
@@ -125,12 +126,12 @@ class BikeListTest(APITestCase):
     def test_bike_list_url(self):
         resolver = resolve('/api/bikes/')
         self.assertEqual(resolver.func.__name__, BikeListView.__name__)
-
                     </code></pre>
                 </section>
+
                 <section>
-                    <h3>Endpoints</h3>
-                    <p>Make test pass</p>
+                    <h3>Endpoints <div class="status-red"></h3>
+                    <p>Include urls</p>
                     <pre><code data-trim>
 # urls.py
 
@@ -143,8 +144,9 @@ urlpatterns = [
 ]
                     </code></pre>
                 </section>
-                                <section>
-                    <h3>Endpoints</h3>
+
+                <section>
+                    <h3>Endpoints <div class="status-green"></h3>
                     <p>Make test pass</p>
                     <pre><code data-trim>
 # endpoints.py
@@ -162,25 +164,94 @@ from bikes.endpoints import BikeListView
 
 
 urlpatterns = [
+    url(r'^bikes/', BikeListView.as_view()),
+]
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3>Endpoints <div class="status-green"></h3>
+                    <p>Refactoring</p>
+                    <pre><code data-trim>
+# test_endpoints.py
+
+class BikeListTest(APITestCase):
+    view = BikeListView
+
+    def test_bike_list_url(self):
+        resolver = resolve('/api/bikes/')
+        self.assertEqual(resolver.func.__name__, self.view.__name__)
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3>Endpoints <div class="status-red"></h3>
+                    <p>Test url name</p>
+                    <pre><code data-trim>
+# test_endpoints.py
+
+    def test_bike_list_url_name(self):
+        resolver = resolve('/api/bikes/')
+        self.assertEqual(resolver.url_name, 'bikes-list')
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3>Endpoints <div class="status-green"></div></h3>
+                    <p>Adding name to url</p>
+                    <pre><code data-trim>
+# endpoints_urls.py
+
+from django.conf.urls import url
+from bikes.endpoints import BikeListView
+
+urlpatterns = [
     url(r'^bikes/', BikeListView.as_view(), name='bikes-list'),
 ]
                     </code></pre>
                 </section>
+
                 <section>
-                    <h3>Endpoints</h3>
+                    <h3>Endpoints <div class="status-green"></div></h3>
                     <p>Refactoring</p>
-                    <pre><code>
+                    <pre><code data-trim>
+# test_endpoints.py
+
+class BikeListTest(APITestCase):
+    view = BikeListView
+    view_name = 'bikes-list'
+
+    ...
+
+    def test_bike_list_url_name(self):
+        resolver = resolve('/api/bikes/')
+        self.assertEqual(resolver.url_name, self.view_name)
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3>Endpoints <div class="status-"></div></h3>
+                    <p></p>
+                    <pre><code data-trim>
+
+                    </code></pre>
+                </section>
+
+
+                <section>
+                    <h3>Endpoints <div class="status-"></div></h3>
+                    <p></p>
+                    <pre><code data-trim>
 
                     </code></pre>
                 </section>
 <!-- /Unit testing -->
-
 <!-- Templates -->
 <div class="comment">
                 <section>
                     <h3></h3>
                     <p></p>
-                    <pre><code>
+                    <pre><code data-trim>
 
                     </code></pre>
                 </section>
