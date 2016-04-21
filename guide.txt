@@ -1,0 +1,53 @@
+OK - Project architecture
+    - endpoints.py
+    - endpoints_urls.py
+    - serializers.py
+    - test_endpoints.py
+    - test_serializers.py
+OK - TDD approach
+    - what is TDD
+    - using tests to guide development
+        - apis don't have interfaces for you to click through *unless you are really doing HATEOAS and using the browsable API
+        - refreshing pages is boring
+- introduction to mocking
+    - run test modules individually for quicker result
+- Unit testing
+    - endpoints
+        - URL connection to the view
+        - self.view/self.view_name patterns
+        - view connection to serializer
+            - what if there's different serializer for each method
+        - simple request to each HTTP method
+            - returns a list or an object
+            - returns the correct HTTP status (200, 201)
+            - POST should include the Location header
+    - serializers
+        - test serializers
+            - includes all the desired fields
+            - test the behaviour of each field separately 
+            - never compare the whole structure of the JSON object. This makes tests break unnecessarily for any changes on the serializer and  makes it hard to spot at what field the error occurred (show example)
+            - test edge cases (numbers, dates, string sizes, sending an float to a decimal, sending a decimal to a float)
+            - how to test file fields
+            - test serializer method field
+            - how to test hypermedia
+    - authentication endpoints
+    - permissions
+        - auth_client pattern
+        - not accessible resources should return 404 unless you want the user to know they exist
+    - pagination
+    - filtering
+        - test_num_queries
+    - integration to external services 
+         - make sure they are easily mockeable functions)
+         - use responses
+         - vcrpy (https://github.com/kevin1024/vcrpy) (https://github.com/agriffis/vcrpy-unittest)
+    - tools
+        - model-mommy
+- Functional tests
+    - try to consume your API using JS for a real world test
+    - Postman (also very util to debug)
+    - stress testing
+    - Runscope
+    - use logs for easy tracing back and debugging
+    - regression test things that failed
+    - test your documentation!

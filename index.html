@@ -1,50 +1,167 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+        <title>reveal.js</title>
 
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="assets/custom.css">
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <h1>Testing your<br>web API</h1>
+                    <h2>Filipe Ximenes (@xima)</h2>
+                </section>
+                <section>
+                    <h3>Environment</h3>
+                    <ul>
+                        <li>Python 3</li>
+                        <li>Django REST Framework</li>
+                        <li>Django TestCase</li>
+                    </ul>
+                </section>
+                <section>
+                    <h3>App structure</h3>
+                    <pre><code data-trim>
+.
+└── app
+    ├── endpoints.py
+    ├── endpoints_urls.py
+    ├── serializers.py
+    ├── views.py
+    ├── urls.py
+    ├── tests
+    |   ├── test_serializers.py
+    |   ├── test_endpoints.py
+    |   └── __init__.py
+    └── __init__.py
+                    </code></pre>
+                </section>
+<!-- TDD -->
+                <section class="section-slide">
+                    <h2>TDD approach</h2>
+                </section>
+                <section>
+                    <h3>TDD approach</h3>
+                    <blockquote cite="https://www.techopedia.com/definition/25850/test-driven-development-tdd">
+                        &ldquo;Test driven development (TDD) is an software development approach in which a test is written before writing the code. Once the new code passes the test, it is refactored to an acceptable standard.&rdquo;
+                    </blockquote>
+                </section>
+                <section>
+                    <h3>TDD approach</h3>
+                    <ul>
+                        <li>Write a failing test</li>
+                        <li>Make the test pass</li>
+                        <li>Refactor</li>
+                        <li>Loop back</li>
+                    </ul>
+                </section>
+                <section>
+                    <h3>TDD approach</h3>
+                    <ul>
+                        <li>No interface to click through*</li>
+                        <li>Refreshing is boring</li>
+                        <li>Use tests to guide development</li>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <small><p>*unless you are using DRF's browsable API</p></small>
+                    </ul>
+                </section>
+<!-- /TDD -->
+<!-- TestCase -->
+<div class="comment">
+                <section class="section-slide">
+                    <h2>Test framework</h2>
+                    <h3>Python TestCase</h3>
+                </section>
+</div>
+<!-- /TestCase -->
+<!-- Mocking -->
+<div class="comment">
+                <section class="section-slide">
+                    <h2>Mocking</h2>
+                </section>
+                <section>
+                    <h3>Introduction to mocking</h3>
+                </section>
+</div>
+<!-- /Mocking -->
+<!-- Unit testing -->
+                <section class="section-slide">
+                    <h2>Unit testing</h2>
+                    <h3>Endpoints</h3>
+                </section>
+                <section>
+                    <h3>Endpoints</h3>
+                    <p>Connecting endpoint to URL</p>
+                    <pre><code data-trim>
+# test_endpoints.py
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.js"></script>
+from django.core.urlresolvers import resolve
+from bikes.endpoints import BikeListView
+...
+    def test_bike_list_url():
+        found = resolve('/api/bikes/')
+        self.assertEqual(found.func, BikeListView.as_view())
+                    </code></pre>
+                </section>
+                <section>
+                    <h3>Endpoints</h3>
+                    <p>Make test pass</p>
+                    <pre><code data-trim>
+# endpoints.py
 
-		<script>
-			// More info https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				history: true,
+from restframework.generics import ListAPIView
 
-				// More info https://github.com/hakimel/reveal.js#dependencies
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				]
-			});
-		</script>
-	</body>
+class BikeListView(ListAPIView):
+    pass
+                    </code></pre>
+                    <pre><code data-trim>
+# endpoints_urls.py
+                    </code></pre>
+                </section>
+<!-- /Unit testing -->
+            </div>
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.js"></script>
+
+        <script>
+            // More info https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                history: true,
+                center: false,
+                progress: false,
+                controls: false,
+
+                // More info https://github.com/hakimel/reveal.js#dependencies
+                dependencies: [
+                    { src: 'plugin/markdown/marked.js' },
+                    { src: 'plugin/markdown/markdown.js' },
+                    { src: 'plugin/notes/notes.js', async: true },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+                ]
+            });
+        </script>
+    </body>
 </html>
