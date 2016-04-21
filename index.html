@@ -32,8 +32,8 @@
                     <h3>Environment</h3>
                     <ul>
                         <li>Python 3</li>
-                        <li>Django REST Framework</li>
-                        <li>Django TestCase</li>
+                        <li>Django 1.9</li>
+                        <li>Django REST Framework 3.3</li>
                     </ul>
                 </section>
                 <section>
@@ -117,14 +117,33 @@
 # test_endpoints.py
 
 from django.core.urlresolvers import resolve
+from rest_framework.test import APITestCase
 from bikes.endpoints import BikeListView
-...
-    def test_bike_list_url():
-        found = resolve('/api/bikes/')
-        self.assertEqual(found.func, BikeListView.as_view())
+
+class BikeListTest(APITestCase):
+
+    def test_bike_list_url(self):
+        resolver = resolve('/api/bikes/')
+        self.assertEqual(resolver.func.__name__, BikeListView.__name__)
+
                     </code></pre>
                 </section>
                 <section>
+                    <h3>Endpoints</h3>
+                    <p>Make test pass</p>
+                    <pre><code data-trim>
+# urls.py
+
+from django.conf.urls import url, include
+from django.contrib import admin
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'^api/', include('bikes.endpoints_urls')),
+]
+                    </code></pre>
+                </section>
+                                <section>
                     <h3>Endpoints</h3>
                     <p>Make test pass</p>
                     <pre><code data-trim>
@@ -137,9 +156,36 @@ class BikeListView(ListAPIView):
                     </code></pre>
                     <pre><code data-trim>
 # endpoints_urls.py
+
+from django.conf.urls import url
+from bikes.endpoints import BikeListView
+
+
+urlpatterns = [
+    url(r'^bikes/', BikeListView.as_view(), name='bikes-list'),
+]
+                    </code></pre>
+                </section>
+                <section>
+                    <h3>Endpoints</h3>
+                    <p>Refactoring</p>
+                    <pre><code>
+
                     </code></pre>
                 </section>
 <!-- /Unit testing -->
+
+<!-- Templates -->
+<div class="comment">
+                <section>
+                    <h3></h3>
+                    <p></p>
+                    <pre><code>
+
+                    </code></pre>
+                </section>
+</div>
+<!-- /Templates -->
             </div>
         </div>
 
