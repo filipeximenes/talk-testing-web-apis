@@ -7,7 +7,7 @@ class BikeSerializerTests(APITestCase):
 
     def setUp(self):
         self.bike_attributes = {
-            'model_name': 'Caloi',
+            'color': 'Yellow',
             'size': '52.0'}
 
         self.bike = Bike.objects.create(**self.bike_attributes)
@@ -16,18 +16,14 @@ class BikeSerializerTests(APITestCase):
     def test_serializer_contains_expected_fields(self):
         data = self.serializer.data
 
-        self.assertIn('model_name', data)
-        self.assertNotIn('size', data)
-        self.assertNotIn('data_bought', data)
-        # self.assertEqual(set(data.keys()), set(['model_name']))
+        self.assertEqual(set(data.keys()), set(['color', 'size']))
 
     def test_serializer_model_name_field_content(self):
         data = self.serializer.data
 
-        self.assertEqual(data['model_name'], self.bike_attributes['model_name'])
+        self.assertEqual(data['color'], self.bike_attributes['color'])
 
     def test_serializer_size_field_content(self):
-        field = 'size'
         data = self.serializer.data
 
         self.assertIsInstance(data['size'], float)

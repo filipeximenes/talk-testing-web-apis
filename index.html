@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        <title>reveal.js</title>
+        <title>Testing your web API</title>
 
         <link rel="stylesheet" href="css/reveal.css">
         <link rel="stylesheet" href="assets/custom.css">
@@ -277,8 +277,21 @@ class BikeListView(ListAPIView):
 </section>
 
 <section>
+    <h3>Model</h3>
+    <pre><code>
+# models.py
+
+from django.db import models
+
+class Bike(models.Model):
+    color = models.CharField(max_length=255, null=True, blank=True)
+    last_used = models.DateTimeField(null=True, blank=True)
+    </code></pre>
+</section>
+
+<section>
     <h3>Serializers <div class="status-red"></div></h3>
-    <p>Test serializer expected fields</p>
+    <p>Test we know what fields to expect</p>
     <pre><code data-trim>
 # test_serializers.py
 
@@ -289,14 +302,13 @@ from bikes.serializers import BikeSerializer
 class BikeSerializerTests(APITestCase):
 
     def test_serializer_contains_expected_fields(self):
-        bike = Bike.objects.create(model_name='Caloi')
+        bike = Bike.objects.create(color='Yellow')
         serializer = BikeSerializer(instance=bike)
 
         data = serializer.data
 
-        self.assertIn('model_name', data)
-        self.assertNotIn('size', data)
-        self.assertNotIn('data_bought', data)
+        self.assertIn('color', data)
+        self.assertNotIn('last_used', data)
     </code></pre>
     <pre><code>AssertionError: Class BikeSerializer missing "Meta" attribute</code></pre>
 </section>
@@ -313,7 +325,7 @@ class BikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bike
     </code></pre>
-    <pre><code>AssertionError: 'size' unexpectedly found in {'data_bought': None...</code></pre>
+    <pre><code>AssertionError: 'last_used' unexpectedly found in {'last_used': None...</code></pre>
 </section>
 
 <section>
@@ -324,23 +336,23 @@ class BikeSerializer(serializers.ModelSerializer):
 class BikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bike
-        fields = ['model_name']
+        fields = ['color']
     </code></pre>
 </section>
 
 <section>
     <h3>Serializers <div class="status-green"></div></h3>
-    <p>Test model_name returns the correct value</p>
+    <p>Test color returns the correct value</p>
     <pre><code data-trim>
 # test_serializers.py
 
-    def test_serializer_model_name_field_content(self):
-        bike = Bike.objects.create(model_name='Caloi')
+    def test_serializer_color_field_content(self):
+        bike = Bike.objects.create(color='Yellow')
         serializer = BikeSerializer(instance=bike)
 
         data = serializer.data
 
-        self.assertEqual(data['model_name'], 'Caloi')
+        self.assertEqual(data, {'color': 'Yellow'})
     </code></pre>
 </section>
 
@@ -362,15 +374,15 @@ class BikeSerializer(serializers.ModelSerializer):
     <pre><code data-trim>
 # test_serializers.py
 
-    def test_serializer_model_name_field_content(self):
-        bike = Bike.objects.create(model_name='')
+    def test_serializer_color_field_content(self):
+        bike = Bike.objects.create(color='')
         serializer = BikeSerializer(instance=bike)
 
         data = serializer.data
 
-        self.assertEqual(data['model_name'], 'Caloi')
+        self.assertEqual(data, {'color': 'Yellow'})
     </code></pre>
-    <pre><code>AssertionError: '' != 'Caloi'</code></pre>
+    <pre><code>AssertionError: '' != 'Yellow'</code></pre>
 </section>
 
 <section>
@@ -379,15 +391,15 @@ class BikeSerializer(serializers.ModelSerializer):
     <pre><code data-trim>
 # test_serializers.py
 
-    def test_serializer_model_name_field_content(self):
-        model_name = 'Caloi'
+    def test_serializer_color_field_content(self):
+        color = 'Yellow'
 
-        bike = Bike.objects.create(model_name=model_name)
+        bike = Bike.objects.create(color=color)
         serializer = BikeSerializer(instance=bike)
 
         data = serializer.data
 
-        self.assertEqual(data['model_name'], model_name)
+        self.assertEqual(data, {'color': 'Yellow'})
     </code></pre>
 </section>
 
@@ -401,7 +413,7 @@ class BikeSerializerTests(APITestCase):
 
     def setUp(self):
         self.bike_attributes = {
-            'model_name': 'Caloi' }
+            'color': 'Yellow' }
 
         self.bike = Bike.objects.create(**self.bike_attributes)
         self.serializer = BikeSerializer(instance=self.bike)
@@ -416,29 +428,127 @@ class BikeSerializerTests(APITestCase):
     def test_serializer_contains_expected_fields(self):
         data = self.serializer.data
 
-        self.assertIn('model_name', data)
+        self.assertIn('color', data)
+        self.assertNotIn('last_used', data)
 
-    def test_serializer_model_name_field_content(self):
+    def test_serializer_color_field_content(self):
         data = self.serializer.data
 
-        self.assertEqual(data['model_name'], self.bike_attributes['model_name'])
+        self.assertEqual(data, {'color': 'Yellow'})
     </code></pre>
 </section>
 
 <section>
     <h3>Serializers <div class="status-red"></div></h3>
-    <p>New field. Test size is a float</p>
+    <p>New field, test size is a float</p>
     <pre><code data-trim>
 # test_serializers.py
 
     def test_serializer_size_field_content(self):
-        field = 'size'
         data = self.serializer.data
 
         self.assertIsInstance(data['size'], float)
     </code></pre>
+    <pre><code>KeyError: 'size'</code></pre>
 </section>
 
+<section>
+    <h3>Serializers <div class="status-red"></div></h3>
+    <pre><code data-trim>
+# models.py
+
+    size = models.DecimalField(max_digits=4, decimal_places=2,
+        null=True, blank=True)
+    </code></pre>
+    <pre><code>
+# serializers.py
+
+        fields = ['color', 'size']
+    </code></pre>
+    <pre><code>AssertionError: {'color': 'Yellow', 'size': '52.00'} != {'color': 'Yellow'}</code></pre>
+    <pre><code>AssertionError: '52.00' is not an instance of 'float'</code></pre>
+</section>
+
+<section>
+    <h3>Serializers <div class="status-red"></div></h3>
+    <p>Test field by field, never the full dictionary</p>
+    <pre><code>
+# test_serializers.py
+
+    def test_serializer_model_name_field_content(self):
+        data = self.serializer.data
+
+        self.assertEqual(data['color'], self.bike_attributes['color'])
+    </code></pre>
+    <pre><code>AssertionError: '52.00' is not an instance of 'float'</code></pre>
+</section>
+
+<section>
+    <h3>Serializers <div class="status-green"></div></h3>
+    <pre><code data-trim>
+# serializers.py
+
+from rest_framework import serializers
+from bikes.models import Bike
+
+class BikeSerializer(serializers.ModelSerializer):
+    size = serializers.FloatField()
+
+    class Meta:
+        model = Bike
+        fields = ['color', 'size']
+    </code></pre>
+</section>
+
+<section class="section-slide">
+    <h2>DANGER</h2>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <h3>`test_serializer_contains_expected_fields` it's supposed to be failing now</h3>
+</section>
+
+<section>
+    <h3>Serializers <div class="status-green"></div></h3>
+    <p>Test did not capture we added new field</p>
+    <pre><code>
+# test_serializers.py
+
+    def test_serializer_contains_expected_fields(self):
+        data = self.serializer.data
+
+        self.assertIn('color', data)
+        self.assertNotIn('last_used', data)
+    </code></pre>
+</section>
+
+<section>
+    <h3>Serializers <div class="status-red"></div></h3>
+    <pre><code>
+# test_serializers.py
+
+    def test_serializer_contains_expected_fields(self):
+        data = self.serializer.data
+
+        self.assertEqual(set(data.keys()), set(['color']))
+    </code></pre>
+</section>
+
+<section>
+    <h3>Serializers <div class="status-green"></div></h3>
+    <pre><code>
+# test_serializers.py
+
+    def test_serializer_contains_expected_fields(self):
+        data = self.serializer.data
+
+        self.assertEqual(set(data.keys()), set(['color', 'size']))
+    </code></pre>
+</section>
 
 <!-- /Unit testing -->
 
