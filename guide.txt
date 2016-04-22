@@ -59,6 +59,7 @@ Unit test review:
 - Unit test if things connect (URL - View, view_name - URL, View - serializer)
 - Always test each field separatelly
 - Always test you know exactly what are the fields being returned
+- Have at least one test for each HTTP method you are using
 
 All tests review:
 - Make sure tests fail before passing

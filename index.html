@@ -237,22 +237,63 @@ class BikeListTest(APITestCase):
 </section>
 
 <section>
-    <h3>Endpoints <div class="status-red"></div></h3>
-    <p>Test view uses `BikeSerializer`</p>
+    <h3>Model</h3>
     <pre><code data-trim>
-# test_endpoints.py
+# models.py
 
-from bikes.serializers import BikeSerializer
+from django.db import models
 
-    def test_bike_list_uses_bike_serializer(self):
-        self.assertEqual(self.view_class().get_serializer_class(),
-            BikeSerializer)
+class Bike(models.Model):
+    color = models.CharField(max_length=255, null=True, blank=True)
+    last_used = models.DateTimeField(null=True, blank=True)
     </code></pre>
-    <pre><code>ImportError: cannot import name 'BikeListView'</code></pre>
 </section>
 
 <section>
     <h3>Endpoints <div class="status-red"></div></h3>
+    <p>Test endpoint returns 200</p>
+    <pre><code data-trim>
+# test_endpoints.py
+
+    def test_bike_list_returns_200(self):
+        response = self.client.get(reverse(self.view_name))
+
+        self.assertEqual(response.status_code, status.status)
+    </code></pre>
+    <pre><code>AssertionError: 'BikeListView' should either include a `queryset` attr...</code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <pre><code data-trim>
+# endpoints.py
+
+from rest_framework.generics import ListAPIView
+from bikes.models import Bike
+
+class BikeListView(ListAPIView):
+
+    def get_queryset(self):
+        return Bike.objects.all()
+    </code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-red"></div></h3>
+    <p>Test endpoint returns a list</p>
+    <pre><code data-trim>
+# test_endpoints.py
+
+    def test_bike_list_returns_a_list(self):
+        response = self.client.get(reverse(self.view_name))
+
+        self.assertIsInstance(response.data, list)
+    </code></pre>
+    <pre><code>AssertionError: 'BikeListView' should either include a `serializer_class`...</code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
     <pre><code data-trim>
 # serializers.py
 
@@ -261,11 +302,6 @@ from rest_framework import serializers
 class BikeSerializer(serializers.ModelSerializer):
     pass
     </code></pre>
-    <pre><code>AssertionError: 'BikeListView' should either include a `serializer_class`...</code></pre>
-</section>
-
-<section>
-    <h3>Endpoints <div class="status-green"></div></h3>
     <pre><code data-trim>
 # endpoints.py
 
@@ -273,19 +309,59 @@ from bikes.serializers import BikeSerializer
 
 class BikeListView(ListAPIView):
     serializer_class = BikeSerializer
+
+    def get_queryset(self):
+        return Bike.objects.all()
     </code></pre>
 </section>
 
 <section>
-    <h3>Model</h3>
-    <pre><code>
-# models.py
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <p>Test view uses `BikeSerializer`</p>
+    <pre><code data-trim>
+# test_endpoints.py
 
-from django.db import models
+from bikes.serializers import BikeSerializer
+...
+    def test_bike_list_uses_bike_serializer(self):
+        self.assertEqual(self.view_class().get_serializer_class(),
+            BikeSerializer)
+    </code></pre>
+</section>
 
-class Bike(models.Model):
-    color = models.CharField(max_length=255, null=True, blank=True)
-    last_used = models.DateTimeField(null=True, blank=True)
+<section class="section-slide">
+    <h2>DANGER</h2>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <h3>All tests MUST fail before passing</h3>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <p>Force test to break and then restore it</p>
+    <pre><code data-trim>
+# test_endpoints.py
+
+from bikes.serializers import BikeSerializer
+...
+    def test_bike_list_uses_bike_serializer(self):
+        self.assertEqual(self.view_class().get_serializer_class(),
+            None)
+    </code></pre>
+    <pre><code>AssertionError: class 'bikes.serializers.BikeSerializer' != None</code></pre>
+    <pre><code data-trim>
+# test_endpoints.py
+
+from bikes.serializers import BikeSerializer
+...
+    def test_bike_list_uses_bike_serializer(self):
+        self.assertEqual(self.view_class().get_serializer_class(),
+            BikeSerializer)
     </code></pre>
 </section>
 
@@ -356,35 +432,6 @@ class BikeSerializer(serializers.ModelSerializer):
     </code></pre>
 </section>
 
-<section class="section-slide">
-    <h2>DANGER</h2>
-    <div class="status-red"></div>
-    <div class="status-red"></div>
-    <div class="status-red"></div>
-    <div class="status-red"></div>
-    <div class="status-red"></div>
-    <div class="status-red"></div>
-    <div class="status-red"></div>
-    <h3>All tests MUST fail before passing</h3>
-</section>
-
-<section>
-    <h3>Serializers <div class="status-red"></div></h3>
-    <p>Force it to break to make sure it's beeing ran</p>
-    <pre><code data-trim>
-# test_serializers.py
-
-    def test_serializer_color_field_content(self):
-        bike = Bike.objects.create(color='')
-        serializer = BikeSerializer(instance=bike)
-
-        data = serializer.data
-
-        self.assertEqual(data, {'color': 'Yellow'})
-    </code></pre>
-    <pre><code>AssertionError: '' != 'Yellow'</code></pre>
-</section>
-
 <section>
     <h3>Serializers <div class="status-green"></div></h3>
     <p>Refactor: use variables to avoid mistakes</p>
@@ -399,7 +446,7 @@ class BikeSerializer(serializers.ModelSerializer):
 
         data = serializer.data
 
-        self.assertEqual(data, {'color': 'Yellow'})
+        self.assertEqual(data, {'color': color})
     </code></pre>
 </section>
 
@@ -443,6 +490,11 @@ class BikeSerializerTests(APITestCase):
     <p>New field, test size is a float</p>
     <pre><code data-trim>
 # test_serializers.py
+    def setUp(self):
+        self.bike_attributes = {
+            'color': 'Yellow',
+            'size': '52.0'}
+        ...
 
     def test_serializer_size_field_content(self):
         data = self.serializer.data
@@ -549,6 +601,17 @@ class BikeSerializer(serializers.ModelSerializer):
         self.assertEqual(set(data.keys()), set(['color', 'size']))
     </code></pre>
 </section>
+
+<section>
+    <h3>Endpoints <div class="status-red"></div></h3>
+    <p>Test </p>
+    <pre><code data-trim>
+
+    </code></pre>
+</section>
+
+<!-- test POST to endpoint -->
+
 
 <!-- /Unit testing -->
 
