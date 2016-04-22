@@ -23,8 +23,9 @@ OK        - self.view/self.view_name patterns
             - POST should include the Location header
     - serializers
         - test serializers
-            - includes all the desired fields
+OK            - includes all the desired fields
             - test the behaviour of each field separately
+            - test validations (required fields)
             - never compare the whole structure of the JSON object. This makes tests break unnecessarily for any changes on the serializer and  makes it hard to spot at what field the error occurred (show example)
             - test edge cases (numbers, dates, string sizes, sending an float to a decimal, sending a decimal to a float)
             - how to test file fields

@@ -24,21 +24,23 @@
     <body>
         <div class="reveal">
             <div class="slides">
-                <section>
-                    <h1>Testing your<br>web API</h1>
-                    <h2>Filipe Ximenes (@xima)</h2>
-                </section>
-                <section>
-                    <h3>Environment</h3>
-                    <ul>
-                        <li>Python 3</li>
-                        <li>Django 1.9</li>
-                        <li>Django REST Framework 3.3</li>
-                    </ul>
-                </section>
-                <section>
-                    <h3>App structure</h3>
-                    <pre><code data-trim>
+<section>
+    <h1>Testing your<br>web API</h1>
+    <h2>Filipe Ximenes (@xima)</h2>
+</section>
+
+<section>
+    <h3>Environment</h3>
+    <ul>
+        <li>Python 3</li>
+        <li>Django 1.9</li>
+        <li>Django REST Framework 3.3</li>
+    </ul>
+</section>
+
+<section>
+    <h3>App structure</h3>
+    <pre><code data-trim>
 .
 └── app
     ├── endpoints.py
@@ -51,70 +53,74 @@
     |   ├── test_endpoints.py
     |   └── __init__.py
     └── __init__.py
-                    </code></pre>
-                </section>
+    </code></pre>
+</section>
+
 <!-- TDD -->
-                <section class="section-slide">
-                    <h2>TDD approach</h2>
-                </section>
-                <section>
-                    <h3>TDD approach</h3>
-                    <blockquote cite="https://www.techopedia.com/definition/25850/test-driven-development-tdd">
-                        &ldquo;Test driven development (TDD) is an software development approach in which a test is written before writing the code. Once the new code passes the test, it is refactored to an acceptable standard.&rdquo;
-                    </blockquote>
-                </section>
-                <section>
-                    <h3>TDD approach</h3>
-                    <ul>
-                        <li>Write a failing test</li>
-                        <li>Make the test pass</li>
-                        <li>Refactor</li>
-                        <li>Loop back</li>
-                    </ul>
-                </section>
-                <section>
-                    <h3>TDD approach</h3>
-                    <ul>
-                        <li>No interface to click through*</li>
-                        <li>Refreshing is boring</li>
-                        <li>Use tests to guide development</li>
-                        <br>
-                        <br>
-                        <br>
-                        <br>
-                        <br>
-                        <small><p>*unless you are using DRF's browsable API</p></small>
-                    </ul>
-                </section>
+<section class="section-slide">
+    <h2>TDD approach</h2>
+</section>
+<section>
+    <h3>TDD approach</h3>
+    <blockquote cite="https://www.techopedia.com/definition/25850/test-driven-development-tdd">
+        &ldquo;Test driven development (TDD) is an software development approach in which a test is written before writing the code. Once the new code passes the test, it is refactored to an acceptable standard.&rdquo;
+    </blockquote>
+</section>
+<section>
+    <h3>TDD approach</h3>
+    <ul>
+        <li>Write a failing test</li>
+        <li>Make the test pass</li>
+        <li>Refactor</li>
+        <li>Loop back</li>
+    </ul>
+</section>
+<section>
+    <h3>TDD approach</h3>
+    <ul>
+        <li>No interface to click through*</li>
+        <li>Refreshing is boring</li>
+        <li>Use tests to guide development</li>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <small><p>*unless you are using DRF's browsable API</p></small>
+    </ul>
+</section>
 <!-- /TDD -->
+
 <!-- TestCase -->
 <div class="comment">
-                <section class="section-slide">
-                    <h2>Test framework</h2>
-                    <h3>Python TestCase</h3>
-                </section>
+<section class="section-slide">
+    <h2>Test framework</h2>
+    <h3>Python TestCase</h3>
+</section>
 </div>
 <!-- /TestCase -->
+
 <!-- Mocking -->
 <div class="comment">
-                <section class="section-slide">
-                    <h2>Mocking</h2>
-                </section>
-                <section>
-                    <h3>Introduction to mocking</h3>
-                </section>
+<section class="section-slide">
+    <h2>Mocking</h2>
+</section>
+<section>
+    <h3>Introduction to mocking</h3>
+</section>
 </div>
 <!-- /Mocking -->
-<!-- Unit testing -->
-                <section class="section-slide">
-                    <h2>Unit testing</h2>
-                    <h3>Endpoints</h3>
-                </section>
 
-                <section>
-                    <h3>Endpoints <div class="status-red"></h3>
-                    <p>Connecting endpoint to URL</p>
-                    <pre><code data-trim>
+<!-- Unit testing -->
+<section class="section-slide">
+    <h2>Unit testing</h2>
+    <h3>Endpoints</h3>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-red"></div></h3>
+    <p>Connecting endpoint to URL</p>
+    <pre><code data-trim>
 # test_endpoints.py
 
 from django.core.urlresolvers import resolve
@@ -126,13 +132,26 @@ class BikeListTest(APITestCase):
     def test_bike_list_url(self):
         resolver = resolve('/api/bikes/')
         self.assertEqual(resolver.func.__name__, BikeListView.__name__)
-                    </code></pre>
-                </section>
+    </code></pre>
+    <pre><code>ImportError: cannot import name 'BikeListView'</code></pre>
+</section>
 
-                <section>
-                    <h3>Endpoints <div class="status-red"></h3>
-                    <p>Include urls</p>
-                    <pre><code data-trim>
+<section>
+    <h3>Endpoints <div class="status-red"></div></h3>
+    <pre><code data-trim>
+# endpoints.py
+
+from restframework.generics import ListAPIView
+
+class BikeListView(ListAPIView):
+    pass
+    </code></pre>
+    <pre><code data-trim>django.core.urlresolvers.Resolver404: {'path': 'api/bikes/', ...</code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <pre><code data-trim>
 # urls.py
 
 from django.conf.urls import url, include
@@ -142,37 +161,25 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include('bikes.endpoints_urls')),
 ]
-                    </code></pre>
-                </section>
+    </code></pre>
+    <pre><code>django.core.exceptions.ImproperlyConfigured: The included URLconf ...</code></pre>
 
-                <section>
-                    <h3>Endpoints <div class="status-green"></h3>
-                    <p>Make test pass</p>
-                    <pre><code data-trim>
-# endpoints.py
-
-from restframework.generics import ListAPIView
-
-class BikeListView(ListAPIView):
-    pass
-                    </code></pre>
-                    <pre><code data-trim>
+    <pre><code data-trim>
 # endpoints_urls.py
 
 from django.conf.urls import url
 from bikes.endpoints import BikeListView
 
-
 urlpatterns = [
     url(r'^bikes/', BikeListView.as_view()),
 ]
-                    </code></pre>
-                </section>
+    </code></pre>
+</section>
 
-                <section>
-                    <h3>Endpoints <div class="status-green"></h3>
-                    <p>Refactoring</p>
-                    <pre><code data-trim>
+<section>
+    <h3>Endpoints <div class="status-green"></h3>
+    <p>Refactoring: `self.view`</p>
+    <pre><code data-trim>
 # test_endpoints.py
 
 class BikeListTest(APITestCase):
@@ -181,25 +188,25 @@ class BikeListTest(APITestCase):
     def test_bike_list_url(self):
         resolver = resolve('/api/bikes/')
         self.assertEqual(resolver.func.__name__, self.view.__name__)
-                    </code></pre>
-                </section>
+    </code></pre>
+</section>
 
-                <section>
-                    <h3>Endpoints <div class="status-red"></h3>
-                    <p>Test url name</p>
-                    <pre><code data-trim>
+<section>
+    <h3>Endpoints <div class="status-red"></h3>
+    <p>Test url name</p>
+    <pre><code data-trim>
 # test_endpoints.py
 
     def test_bike_list_url_name(self):
         resolver = resolve('/api/bikes/')
         self.assertEqual(resolver.url_name, 'bikes-list')
-                    </code></pre>
-                </section>
+    </code></pre>
+    <pre><code>AssertionError: None != 'bikes-list'</code></pre>
+</section>
 
-                <section>
-                    <h3>Endpoints <div class="status-green"></div></h3>
-                    <p>Adding name to url</p>
-                    <pre><code data-trim>
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <pre><code data-trim>
 # endpoints_urls.py
 
 from django.conf.urls import url
@@ -208,13 +215,13 @@ from bikes.endpoints import BikeListView
 urlpatterns = [
     url(r'^bikes/', BikeListView.as_view(), name='bikes-list'),
 ]
-                    </code></pre>
-                </section>
+    </code></pre>
+</section>
 
-                <section>
-                    <h3>Endpoints <div class="status-green"></div></h3>
-                    <p>Refactoring</p>
-                    <pre><code data-trim>
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <p>Refactoring: `self.view_name`</p>
+    <pre><code data-trim>
 # test_endpoints.py
 
 class BikeListTest(APITestCase):
@@ -226,35 +233,192 @@ class BikeListTest(APITestCase):
     def test_bike_list_url_name(self):
         resolver = resolve('/api/bikes/')
         self.assertEqual(resolver.url_name, self.view_name)
-                    </code></pre>
-                </section>
+    </code></pre>
+</section>
 
-                <section>
-                    <h3>Endpoints <div class="status-"></div></h3>
-                    <p></p>
-                    <pre><code data-trim>
+<section>
+    <h3>Serializers <div class="status-red"></div></h3>
+    <p>Test serializer expected fields</p>
+    <pre><code data-trim>
+# test_serializers.py
 
-                    </code></pre>
-                </section>
+from rest_framework.test import APITestCase
+from bikes.models import Bike
+from bikes.serializers import BikeSerializer
+
+class BikeSerializerTests(APITestCase):
+
+    def test_serializer_contains_expected_fields(self):
+        bike = Bike.objects.create(model_name='Caloi')
+        serializer = BikeSerializer(instance=bike)
+
+        data = serializer.data
+
+        self.assertIn('model_name', data)
+    </code></pre>
+    <pre><code>ImportError: cannot import name 'BikeSerializer'</code></pre>
+</section>
+
+<section>
+    <h3>Serializers <div class="status-red"></div></h3>
+    <p></p>
+    <pre><code data-trim>
+# serializers.py
+
+from rest_framework import serializers
+
+class BikeSerializer(serializers.ModelSerializer):
+    pass
+    </code></pre>
+    <pre><code>AssertionError: Class BikeSerializer missing "Meta" attribute</code></pre>
+
+    <pre><code data-trim>
+# serializers.py
+
+from rest_framework import serializers
+from bikes.models import Bike
+
+class BikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bike
+    </code></pre>
+    <pre><code>AssertionError: {'size': None, 'id': 1, 'model_name': 'Caloi' ...</code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <pre><code data-trim>
+# serializers.py
+
+class BikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bike
+        fields = ['model_name']
+    </code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <pre><code data-trim>
+# test_serializers.py
+
+    def test_serializer_model_name_field_content(self):
+        bike = Bike.objects.create(model_name='Caloi')
+        serializer = BikeSerializer(instance=bike)
+
+        data = serializer.data
+
+        self.assertEqual(data['model_name'], 'Caloi')
+    </code></pre>
+</section>
+
+<section class="section-slide">
+    <h2>DANGER</h2>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <h3>All tests MUST fail before passing</h3>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-red"></div></h3>
+    <p>Force it to break to make sure it's beeing ran</p>
+    <pre><code data-trim>
+# test_serializers.py
+
+    def test_serializer_model_name_field_content(self):
+        bike = Bike.objects.create(model_name='')
+        serializer = BikeSerializer(instance=bike)
+
+        data = serializer.data
+
+        self.assertEqual(data['model_name'], 'Caloi')
+    </code></pre>
+    <pre><code>AssertionError: '' != 'Caloi'</code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <p>Refactor: use variables to avoid mistakes</p>
+    <pre><code data-trim>
+# test_serializers.py
+
+    def test_serializer_model_name_field_content(self):
+        model_name = 'Caloi'
+
+        bike = Bike.objects.create(model_name=model_name)
+        serializer = BikeSerializer(instance=bike)
+
+        data = serializer.data
+
+        self.assertEqual(data['model_name'], model_name)
+    </code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <p>Refactor: setUp</p>
+    <pre><code data-trim>
+# test_serializers.py
+
+class BikeSerializerTests(APITestCase):
+    def setUp(self):
+        self.bike_attributes = {
+            'model_name': 'Caloi' }
+
+        self.bike = Bike.objects.create(**self.bike_attributes)
+        self.serializer = BikeSerializer(instance=self.bike)
+    </code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <pre><code data-trim>
+# test_serializers.py
+
+    def test_serializer_contains_expected_fields(self):
+        data = self.serializer.data
+
+        self.assertIn('model_name', data)
+
+    def test_serializer_model_name_field_content(self):
+        data = self.serializer.data
+
+        self.assertEqual(data['model_name'], self.bike_attributes['model_name'])
+    </code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-red"></div></h3>
+    <p>Test size is a float</p>
+    <pre><code data-trim>
+# test_serializers.py
+
+    def test_serializer_size_field_content(self):
+        field = 'size'
+        data = self.serializer.data
+
+        self.assertIsInstance(data['size'], float)
+    </code></pre>
+</section>
 
 
-                <section>
-                    <h3>Endpoints <div class="status-"></div></h3>
-                    <p></p>
-                    <pre><code data-trim>
-
-                    </code></pre>
-                </section>
 <!-- /Unit testing -->
+
+
 <!-- Templates -->
 <div class="comment">
-                <section>
-                    <h3></h3>
-                    <p></p>
-                    <pre><code data-trim>
+<section>
+    <h3></h3>
+    <p></p>
+    <pre><code data-trim>
 
-                    </code></pre>
-                </section>
+    </code></pre>
+</section>
 </div>
 <!-- /Templates -->
             </div>
