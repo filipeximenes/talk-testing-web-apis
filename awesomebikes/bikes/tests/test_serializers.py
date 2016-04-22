@@ -17,6 +17,8 @@ class BikeSerializerTests(APITestCase):
         data = self.serializer.data
 
         self.assertIn('model_name', data)
+        self.assertNotIn('size', data)
+        self.assertNotIn('data_bought', data)
         # self.assertEqual(set(data.keys()), set(['model_name']))
 
     def test_serializer_model_name_field_content(self):

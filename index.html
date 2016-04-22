@@ -178,16 +178,16 @@ urlpatterns = [
 
 <section>
     <h3>Endpoints <div class="status-green"></h3>
-    <p>Refactoring: `self.view`</p>
+    <p>Refactoring: `self.view_class`</p>
     <pre><code data-trim>
 # test_endpoints.py
 
 class BikeListTest(APITestCase):
-    view = BikeListView
+    view_class = BikeListView
 
     def test_bike_list_url(self):
         resolver = resolve('/api/bikes/')
-        self.assertEqual(resolver.func.__name__, self.view.__name__)
+        self.assertEqual(resolver.func.__name__, self.view_class.__name__)
     </code></pre>
 </section>
 
@@ -225,7 +225,7 @@ urlpatterns = [
 # test_endpoints.py
 
 class BikeListTest(APITestCase):
-    view = BikeListView
+    view_class = BikeListView
     view_name = 'bikes-list'
 
     ...
@@ -233,6 +233,46 @@ class BikeListTest(APITestCase):
     def test_bike_list_url_name(self):
         resolver = resolve('/api/bikes/')
         self.assertEqual(resolver.url_name, self.view_name)
+    </code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-red"></div></h3>
+    <p>Test view uses `BikeSerializer`</p>
+    <pre><code data-trim>
+# test_endpoints.py
+
+from bikes.serializers import BikeSerializer
+
+    def test_bike_list_uses_bike_serializer(self):
+        self.assertEqual(self.view_class().get_serializer_class(),
+            BikeSerializer)
+    </code></pre>
+    <pre><code>ImportError: cannot import name 'BikeListView'</code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-red"></div></h3>
+    <pre><code data-trim>
+# serializers.py
+
+from rest_framework import serializers
+
+class BikeSerializer(serializers.ModelSerializer):
+    pass
+    </code></pre>
+    <pre><code>AssertionError: 'BikeListView' should either include a `serializer_class`...</code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <pre><code data-trim>
+# endpoints.py
+
+from bikes.serializers import BikeSerializer
+
+class BikeListView(ListAPIView):
+    serializer_class = BikeSerializer
     </code></pre>
 </section>
 
@@ -255,23 +295,14 @@ class BikeSerializerTests(APITestCase):
         data = serializer.data
 
         self.assertIn('model_name', data)
+        self.assertNotIn('size', data)
+        self.assertNotIn('data_bought', data)
     </code></pre>
-    <pre><code>ImportError: cannot import name 'BikeSerializer'</code></pre>
+    <pre><code>AssertionError: Class BikeSerializer missing "Meta" attribute</code></pre>
 </section>
 
 <section>
     <h3>Serializers <div class="status-red"></div></h3>
-    <p></p>
-    <pre><code data-trim>
-# serializers.py
-
-from rest_framework import serializers
-
-class BikeSerializer(serializers.ModelSerializer):
-    pass
-    </code></pre>
-    <pre><code>AssertionError: Class BikeSerializer missing "Meta" attribute</code></pre>
-
     <pre><code data-trim>
 # serializers.py
 
@@ -282,11 +313,11 @@ class BikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bike
     </code></pre>
-    <pre><code>AssertionError: {'size': None, 'id': 1, 'model_name': 'Caloi' ...</code></pre>
+    <pre><code>AssertionError: 'size' unexpectedly found in {'data_bought': None...</code></pre>
 </section>
 
 <section>
-    <h3>Endpoints <div class="status-green"></div></h3>
+    <h3>Serializers <div class="status-green"></div></h3>
     <pre><code data-trim>
 # serializers.py
 
@@ -298,7 +329,8 @@ class BikeSerializer(serializers.ModelSerializer):
 </section>
 
 <section>
-    <h3>Endpoints <div class="status-green"></div></h3>
+    <h3>Serializers <div class="status-green"></div></h3>
+    <p>Test model_name returns the correct value</p>
     <pre><code data-trim>
 # test_serializers.py
 
@@ -325,7 +357,7 @@ class BikeSerializer(serializers.ModelSerializer):
 </section>
 
 <section>
-    <h3>Endpoints <div class="status-red"></div></h3>
+    <h3>Serializers <div class="status-red"></div></h3>
     <p>Force it to break to make sure it's beeing ran</p>
     <pre><code data-trim>
 # test_serializers.py
@@ -342,7 +374,7 @@ class BikeSerializer(serializers.ModelSerializer):
 </section>
 
 <section>
-    <h3>Endpoints <div class="status-green"></div></h3>
+    <h3>Serializers <div class="status-green"></div></h3>
     <p>Refactor: use variables to avoid mistakes</p>
     <pre><code data-trim>
 # test_serializers.py
@@ -360,12 +392,13 @@ class BikeSerializer(serializers.ModelSerializer):
 </section>
 
 <section>
-    <h3>Endpoints <div class="status-green"></div></h3>
-    <p>Refactor: setUp</p>
+    <h3>Serializers <div class="status-green"></div></h3>
+    <p>Refactor: use `setUp` to keep DRY</p>
     <pre><code data-trim>
 # test_serializers.py
 
 class BikeSerializerTests(APITestCase):
+
     def setUp(self):
         self.bike_attributes = {
             'model_name': 'Caloi' }
@@ -376,7 +409,7 @@ class BikeSerializerTests(APITestCase):
 </section>
 
 <section>
-    <h3>Endpoints <div class="status-green"></div></h3>
+    <h3>Serializers <div class="status-green"></div></h3>
     <pre><code data-trim>
 # test_serializers.py
 
@@ -393,8 +426,8 @@ class BikeSerializerTests(APITestCase):
 </section>
 
 <section>
-    <h3>Endpoints <div class="status-red"></div></h3>
-    <p>Test size is a float</p>
+    <h3>Serializers <div class="status-red"></div></h3>
+    <p>New field. Test size is a float</p>
     <pre><code data-trim>
 # test_serializers.py
 
