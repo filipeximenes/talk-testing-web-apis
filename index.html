@@ -133,7 +133,7 @@ class BikeListTest(APITestCase):
         resolver = resolve('/api/bikes/')
         self.assertEqual(resolver.func.__name__, BikeListView.__name__)
     </code></pre>
-    <pre><code>ImportError: cannot import name 'BikeListView'</code></pre>
+    <pre><code data-trim>ImportError: cannot import name 'BikeListView'</code></pre>
 </section>
 
 <section>
@@ -162,7 +162,7 @@ urlpatterns = [
     url(r'^api/', include('bikes.endpoints_urls')),
 ]
     </code></pre>
-    <pre><code>django.core.exceptions.ImproperlyConfigured: The included URLconf ...</code></pre>
+    <pre><code data-trim>django.core.exceptions.ImproperlyConfigured: The included URLconf ...</code></pre>
 
     <pre><code data-trim>
 # endpoints_urls.py
@@ -201,7 +201,7 @@ class BikeListTest(APITestCase):
         resolver = resolve('/api/bikes/')
         self.assertEqual(resolver.url_name, 'bikes-list')
     </code></pre>
-    <pre><code>AssertionError: None != 'bikes-list'</code></pre>
+    <pre><code data-trim>AssertionError: None != 'bikes-list'</code></pre>
 </section>
 
 <section>
@@ -260,7 +260,7 @@ class Bike(models.Model):
 
         self.assertEqual(response.status_code, status.status)
     </code></pre>
-    <pre><code>AssertionError: 'BikeListView' should either include a `queryset` attr...</code></pre>
+    <pre><code data-trim>AssertionError: 'BikeListView' should either include a `queryset` attr...</code></pre>
 </section>
 
 <section>
@@ -289,7 +289,7 @@ class BikeListView(ListAPIView):
 
         self.assertIsInstance(response.data, list)
     </code></pre>
-    <pre><code>AssertionError: 'BikeListView' should either include a `serializer_class`...</code></pre>
+    <pre><code data-trim>AssertionError: 'BikeListView' should either include a `serializer_class`...</code></pre>
 </section>
 
 <section>
@@ -353,7 +353,7 @@ from bikes.serializers import BikeSerializer
         self.assertEqual(self.view_class().get_serializer_class(),
             None)
     </code></pre>
-    <pre><code>AssertionError: class 'bikes.serializers.BikeSerializer' != None</code></pre>
+    <pre><code data-trim>AssertionError: class 'bikes.serializers.BikeSerializer' != None</code></pre>
     <pre><code data-trim>
 # test_endpoints.py
 
@@ -377,8 +377,8 @@ from bikes.serializers import BikeSerializer
 
 class BikeSerializerTests(APITestCase):
 
-    def test_serializer_contains_expected_fields(self):
-        bike = Bike.objects.create(color='Yellow')
+    def test_contains_expected_fields(self):
+        bike = Bike.objects.create(color='yellow')
         serializer = BikeSerializer(instance=bike)
 
         data = serializer.data
@@ -386,7 +386,7 @@ class BikeSerializerTests(APITestCase):
         self.assertIn('color', data)
         self.assertNotIn('last_used', data)
     </code></pre>
-    <pre><code>AssertionError: Class BikeSerializer missing "Meta" attribute</code></pre>
+    <pre><code data-trim>AssertionError: Class BikeSerializer missing "Meta" attribute</code></pre>
 </section>
 
 <section>
@@ -401,7 +401,7 @@ class BikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bike
     </code></pre>
-    <pre><code>AssertionError: 'last_used' unexpectedly found in {'last_used': None...</code></pre>
+    <pre><code data-trim>AssertionError: 'last_used' unexpectedly found in {'last_used': None...</code></pre>
 </section>
 
 <section>
@@ -422,13 +422,13 @@ class BikeSerializer(serializers.ModelSerializer):
     <pre><code data-trim>
 # test_serializers.py
 
-    def test_serializer_color_field_content(self):
-        bike = Bike.objects.create(color='Yellow')
+    def test_color_field_content(self):
+        bike = Bike.objects.create(color='yellow')
         serializer = BikeSerializer(instance=bike)
 
         data = serializer.data
 
-        self.assertEqual(data, {'color': 'Yellow'})
+        self.assertEqual(data, {'color': 'yellow'})
     </code></pre>
 </section>
 
@@ -438,8 +438,8 @@ class BikeSerializer(serializers.ModelSerializer):
     <pre><code data-trim>
 # test_serializers.py
 
-    def test_serializer_color_field_content(self):
-        color = 'Yellow'
+    def test_color_field_content(self):
+        color = 'yellow'
 
         bike = Bike.objects.create(color=color)
         serializer = BikeSerializer(instance=bike)
@@ -460,7 +460,7 @@ class BikeSerializerTests(APITestCase):
 
     def setUp(self):
         self.bike_attributes = {
-            'color': 'Yellow' }
+            'color': 'yellow' }
 
         self.bike = Bike.objects.create(**self.bike_attributes)
         self.serializer = BikeSerializer(instance=self.bike)
@@ -472,36 +472,36 @@ class BikeSerializerTests(APITestCase):
     <pre><code data-trim>
 # test_serializers.py
 
-    def test_serializer_contains_expected_fields(self):
+    def test_contains_expected_fields(self):
         data = self.serializer.data
 
         self.assertIn('color', data)
         self.assertNotIn('last_used', data)
 
-    def test_serializer_color_field_content(self):
+    def test_color_field_content(self):
         data = self.serializer.data
 
-        self.assertEqual(data, {'color': 'Yellow'})
+        self.assertEqual(data, {'color': 'yellow'})
     </code></pre>
 </section>
 
 <section>
     <h3>Serializers <div class="status-red"></div></h3>
-    <p>New field, test size is a float</p>
+    <p>New `size` field</p>
     <pre><code data-trim>
 # test_serializers.py
     def setUp(self):
         self.bike_attributes = {
-            'color': 'Yellow',
+            'color': 'yellow',
             'size': '52.0'}
         ...
 
-    def test_serializer_size_field_content(self):
+    def test_size_field_content(self):
         data = self.serializer.data
 
-        self.assertIsInstance(data['size'], float)
+        self.assertEqual(data['size'], self.bike_attributes['size'])
     </code></pre>
-    <pre><code>KeyError: 'size'</code></pre>
+    <pre><code data-trim>KeyError: 'size'</code></pre>
 </section>
 
 <section>
@@ -512,31 +512,191 @@ class BikeSerializerTests(APITestCase):
     size = models.DecimalField(max_digits=4, decimal_places=2,
         null=True, blank=True)
     </code></pre>
-    <pre><code>
+    <pre><code data-trim>
 # serializers.py
 
         fields = ['color', 'size']
     </code></pre>
-    <pre><code>AssertionError: {'color': 'Yellow', 'size': '52.00'} != {'color': 'Yellow'}</code></pre>
-    <pre><code>AssertionError: '52.00' is not an instance of 'float'</code></pre>
-</section>
+    <pre><code data-trim>AssertionError: {'color': 'yellow', 'size': '52.00'} != {'color': 'yellow'}</code></pre>
 
-<section>
-    <h3>Serializers <div class="status-red"></div></h3>
-    <p>Test field by field, never the full dictionary</p>
-    <pre><code>
-# test_serializers.py
-
-    def test_serializer_model_name_field_content(self):
-        data = self.serializer.data
-
-        self.assertEqual(data['color'], self.bike_attributes['color'])
-    </code></pre>
-    <pre><code>AssertionError: '52.00' is not an instance of 'float'</code></pre>
 </section>
 
 <section>
     <h3>Serializers <div class="status-green"></div></h3>
+    <p>Test field by field, never the full dictionary</p>
+    <pre><code data-trim>
+# test_serializers.py
+
+    def test_color_field_content(self):
+        data = self.serializer.data
+
+        self.assertEqual(data['color'], self.bike_attributes['color'])
+    </code></pre>
+</section>
+
+<section class="section-slide">
+    <h2>DANGER</h2>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <div class="status-red"></div>
+    <h3>`test_contains_expected_fields` it's supposed to be failing now</h3>
+</section>
+
+<section>
+    <h3>Serializers <div class="status-green"></div></h3>
+    <p>Test did not capture we added new field</p>
+    <pre><code data-trim>
+# test_serializers.py
+
+    def test_contains_expected_fields(self):
+        data = self.serializer.data
+
+        self.assertIn('color', data)
+        self.assertNotIn('last_used', data)
+    </code></pre>
+</section>
+
+<section>
+    <h3>Serializers <div class="status-red"></div></h3>
+    <pre><code data-trim>
+# test_serializers.py
+
+    def test_contains_expected_fields(self):
+        data = self.serializer.data
+
+        self.assertEqual(set(data.keys()), set(['color']))
+    </code></pre>
+</section>
+
+<section>
+    <h3>Serializers <div class="status-green"></div></h3>
+    <pre><code data-trim>
+# test_serializers.py
+
+    def test_contains_expected_fields(self):
+        data = self.serializer.data
+
+        self.assertEqual(set(data.keys()), set(['color', 'size']))
+    </code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-red"></div></h3>
+    <p>Test create a resource</p>
+    <pre><code data-trim>
+# test_endpoints.py
+
+    def test_create_bike_returns_201(self):
+        bike_data = {
+            'color': 'yellow',
+            'size': '52.00'
+        }
+
+        response = self.client.post(reverse(self.view_name), bike_data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    </code></pre>
+    <pre><code data-trim>AssertionError: 405 != 201</code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <pre><code data-trim>
+# endpoints.py
+
+from rest_framework.generics import ListCreateAPIView
+from bikes.serializers import BikeSerializer
+from bikes.models import Bike
+
+class BikeListView(ListCreateAPIView):
+    serializer_class = BikeSerializer
+
+    def get_queryset(self):
+        return Bike.objects.all()
+    </code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <p>Refactor post data</p>
+    <pre><code data-trim>
+# test_endpoints.py
+
+    ...
+    def setUp(self):
+        self.bike_data = {
+            'color': 'yellow',
+            'size': '52.00'
+        }
+    ...
+    def test_create_bike_returns_201(self):
+        response = self.client.post(reverse(self.view_name), self.bike_data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    </code></pre>
+</section>
+
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <p>Test correctly creates database object</p>
+    <pre><code data-trim>
+# test_endpoints.py
+from bikes.models import Bike
+
+...
+
+    def test_create_bike_correctly_saves_to_db(self):
+        self.client.post(reverse(self.view_name), self.bike_data)
+
+        bikes = Bike.objects.all()
+
+        self.assertEqual(len(bikes), 1)
+
+        bike = bikes[0]
+
+        self.assertEqual(bike.color, self.bike_data['color'])
+        self.assertEqual(str(bike.size), self.bike_data['size'])
+    </code></pre>
+</section>
+
+<section>
+    <h3>Test all HTTP methods you are using</h3>
+    <ul>
+        <li>Test returned status code</li>
+        <li>Test correctly changes the database</li>
+        <li>GET</li>
+        <li>POST</li>
+        <li>PUT</li>
+        <li>PATCH</li>
+        <li>DELETE</li>
+        <li>OPTIONS</li>
+    </ul>
+</section>
+
+<section class="section-slide">
+    <h2>Testing fields</h2>
+</section>
+
+<section>
+    <h3>Serializers <div class="status-red"></div></h3>
+    <p>`size` should be a float</p>
+    <pre><code data-trim>
+# test_serializers.py
+
+   def test_size_should_be_float(self):
+        data = self.serializer.data
+
+        self.assertIsInstance(data['size'], float)
+    </code></pre>
+    <pre><code data-trim>AssertionError: '52.00' is not an instance of 'float'</code></pre>
+</section>
+
+<section>
+    <h3>Serializers <div class="status-red"></div></h3>
     <pre><code data-trim>
 # serializers.py
 
@@ -550,67 +710,85 @@ class BikeSerializer(serializers.ModelSerializer):
         model = Bike
         fields = ['color', 'size']
     </code></pre>
-</section>
-
-<section class="section-slide">
-    <h2>DANGER</h2>
-    <div class="status-red"></div>
-    <div class="status-red"></div>
-    <div class="status-red"></div>
-    <div class="status-red"></div>
-    <div class="status-red"></div>
-    <div class="status-red"></div>
-    <div class="status-red"></div>
-    <h3>`test_serializer_contains_expected_fields` it's supposed to be failing now</h3>
+    <pre><code>AssertionError: 52.0 != '52.00'</code></pre>
 </section>
 
 <section>
     <h3>Serializers <div class="status-green"></div></h3>
-    <p>Test did not capture we added new field</p>
-    <pre><code>
+    <pre><code data-trim>
 # test_serializers.py
 
-    def test_serializer_contains_expected_fields(self):
-        data = self.serializer.data
-
-        self.assertIn('color', data)
-        self.assertNotIn('last_used', data)
+    def setUp(self):
+        self.bike_attributes = {
+            'color': 'yellow',
+            'size': 52.0}
     </code></pre>
 </section>
 
 <section>
     <h3>Serializers <div class="status-red"></div></h3>
-    <pre><code>
+    <p>Test size bounds</p>
+    <pre><code data-trim>
 # test_serializers.py
 
-    def test_serializer_contains_expected_fields(self):
-        data = self.serializer.data
+    def test_size_lower_bound(self):
+        self.bike_attributes['size'] = 29.9
 
-        self.assertEqual(set(data.keys()), set(['color']))
+        serializer = BikeSerializer(instance=self.bike, data=self.bike_attributes)
+
+        self.assertFalse(serializer.is_valid())
+        self.assertEqual(set(serializer.errors), set(['size']))
+
+    def test_size_upper_bound(self):
+        self.bike_attributes['size'] = 60.1
+
+        serializer = BikeSerializer(instance=self.bike, data=self.bike_attributes)
+
+        self.assertFalse(serializer.is_valid())
+        self.assertEqual(set(serializer.errors), set(['size']))
     </code></pre>
+    <pre><code>AssertionError: True is not false</code></pre>
+    <pre><code>AssertionError: True is not false</code></pre>
 </section>
 
 <section>
     <h3>Serializers <div class="status-green"></div></h3>
-    <pre><code>
-# test_serializers.py
+    <pre><code data-trim>
+# serializers.py
 
-    def test_serializer_contains_expected_fields(self):
-        data = self.serializer.data
+    size = serializers.FloatField(min_value=30.0, max_value=60.0)
 
-        self.assertEqual(set(data.keys()), set(['color', 'size']))
     </code></pre>
 </section>
 
 <section>
-    <h3>Endpoints <div class="status-red"></div></h3>
-    <p>Test </p>
+    <h3>Serializers <div class="status-red"></div></h3>
+    <p>Test color options</p>
     <pre><code data-trim>
+# test_serializers.py
 
+    def test_color_must_be_valid(self):
+        self.bike_attributes['color'] = 'Not a color'
+
+        serializer = BikeSerializer(instance=self.bike, data=self.bike_attributes)
+
+        self.assertFalse(serializer.is_valid())
+        self.assertEqual(set(serializer.errors.keys()), set(['color']))
     </code></pre>
+    <pre><code>AssertionError: True is not false</code></pre>
 </section>
 
-<!-- test POST to endpoint -->
+<section>
+    <h3>Serializers <div class="status-green"></div></h3>
+    <pre><code data-trim>
+# models.py
+
+    COLOR_OPTIONS = (('yellow', 'yellow'), ('red', 'Red'), ('grey', 'Grey'))
+
+    color = models.CharField(max_length=255, null=True, blank=True,
+        choices=COLOR_OPTIONS)
+    </code></pre>
+</section>
 
 
 <!-- /Unit testing -->
@@ -618,6 +796,10 @@ class BikeSerializer(serializers.ModelSerializer):
 
 <!-- Templates -->
 <div class="comment">
+<section class="section-slide">
+    <h2></h2>
+</section>
+
 <section>
     <h3></h3>
     <p></p>

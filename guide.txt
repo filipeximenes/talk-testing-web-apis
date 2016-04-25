@@ -5,10 +5,10 @@ OK - Project architecture
     - test_endpoints.py
     - test_serializers.py
 OK - TDD approach
-    - what is TDD
-    - using tests to guide development
-        - apis don't have interfaces for you to click through *unless you are really doing HATEOAS and using the browsable API
-        - refreshing pages is boring
+OK    - what is TDD
+OK    - using tests to guide development
+OK        - apis don't have interfaces for you to click through *unless you are really doing HATEOAS and using the browsable API
+OK        - refreshing pages is boring
 - introduction to mocking
     - run test modules individually for quicker result
 - Unit testing
@@ -17,10 +17,10 @@ OK        - URL connection to the view
 OK        - self.view/self.view_name patterns
 OK        - view connection to serializer
             - what if there's different serializer for each method
-        - simple request to each HTTP method
-            - returns a list or an object
-            - returns the correct HTTP status (200, 201)
-            - POST should include the Location header
+OK        - simple request to each HTTP method
+OK            - returns a list or an object
+OK            - returns the correct HTTP status (200, 201)
+OK            - POST should include the Location header
     - serializers
         - test serializers
 OK            - includes all the desired fields
@@ -59,7 +59,11 @@ Unit test review:
 - Unit test if things connect (URL - View, view_name - URL, View - serializer)
 - Always test each field separatelly
 - Always test you know exactly what are the fields being returned
-- Have at least one test for each HTTP method you are using
+- Test at least one valid request for each HTTP method (verify database changes)
+- Test fields return the correct data type
+- Test number bounds
+- Test valid options
+- Test invalid requests
 
 All tests review:
 - Make sure tests fail before passing
