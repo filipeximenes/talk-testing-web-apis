@@ -7,6 +7,8 @@ from rest_framework import status
 from bikes.models import Bike
 from bikes.endpoints import BikeListView
 from bikes.serializers import BikeSerializer
+import responses
+import vcr
 
 
 factory = APIRequestFactory()
@@ -34,11 +36,17 @@ class BikeListTest(APITestCase):
         resolver = resolve('/api/bikes/')
         self.assertEqual(resolver.url_name, self.view_name)
 
+    @responses.activate
     def test_list_returns_200(self):
+        responses.add(responses.GET, 'http://pokeapi.co/api/v2/pokemon/',
+                      body='{"some": "data"}', status=200,
+                      content_type='application/json')
+
         response = self.auth_client.get(reverse(self.view_name))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    @vcr.use_cassette('fixtures/vcr_cassettes/pokeapi.yaml')
     def test_list_returns_a_list(self):
         request = factory.get('', self.bike_data)
         force_authenticate(request, user=self.user)

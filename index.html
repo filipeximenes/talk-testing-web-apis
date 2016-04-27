@@ -893,7 +893,7 @@ from rest_framework.test import APIClient
 </section>
 
 <section class="section-slide">
-    <h2>Now we are missing tests for failing permission</h2>
+    <h2>Testing permission</h2>
 </section>
 
 <section>
@@ -946,6 +946,72 @@ from rest_framework.test import APIClient
         <li>Test edge cases</li>
     </ul>
 </section>
+
+<section class="section-slide">
+    <h2>Testing with external calls</h2>
+</section>
+
+<section>
+    <h3>External calls <div class="status-green"></div></h3>
+    <pre><code data-trim>
+# endpoints.py
+
+import requests
+
+class BikeListView(ListCreateAPIView):
+    serializer_class = BikeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Bike.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        requests.get('http://pokeapi.co/api/v2/pokemon')
+        return super().get(request, *args, **kwargs)
+    </code></pre>
+</section>
+
+<section>
+    <h3>External calls <div class="status-green"></div></h3>
+    <p>Using responses</p>
+    <pre><code>pip install responses</code></pre>
+    <pre><code data-trim>
+# test_endpoints.py
+
+import responses
+
+    @responses.activate
+    def test_list_returns_200(self):
+        responses.add(responses.GET,
+                      'http://pokeapi.co/api/v2/pokemon',
+                      body='{"some": "data"}', status=200,
+                      content_type='application/json')
+
+        response = self.auth_client.get(reverse(self.view_name))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    </code></pre>
+</section>
+
+<section>
+    <h3>External calls <div class="status-green"></div></h3>
+    <p>Using VCR.py</p>
+    <pre><code>pip install vcrpy</code></pre>
+    <pre><code data-trim>
+# test_endpoints.py
+
+import vcr
+
+    @vcr.use_cassette('fixtures/vcr_cassettes/pokeapi.yaml')
+    def test_list_returns_a_list(self):
+        request = factory.get('', self.bike_data)
+        force_authenticate(request, user=self.user)
+        response = self.view(request)
+
+        self.assertIsInstance(response.data, list)
+    </code></pre>
+</section>
+
 
 <!-- /Unit testing -->
 

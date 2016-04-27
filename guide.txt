@@ -38,10 +38,11 @@ OK    - permissions
     - pagination
     - filtering
         - test_num_queries
-    - integration to external services
+OK    - integration to external services
          - make sure they are easily mockeable functions)
          - use responses
          - vcrpy (https://github.com/kevin1024/vcrpy) (https://github.com/agriffis/vcrpy-unittest)
+         - responses
     - tools
         - model-mommy
 - Functional tests
