@@ -145,6 +145,10 @@ body {
   display: block;
   margin-left: 40px; }
 
+.reveal .ident1 {
+  margin-left: 50px;
+  list-style-type: square; }
+
 .reveal dt {
   font-weight: bold; }
 
@@ -191,7 +195,7 @@ body {
   display: block;
   padding: 5px;
   overflow: auto;
-  max-height: 400px;
+  max-height: 600px;
   word-wrap: normal; }
 
 .reveal table {

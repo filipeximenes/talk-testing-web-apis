@@ -13,16 +13,16 @@ class BikeSerializerTests(APITestCase):
         self.bike = Bike.objects.create(**self.bike_attributes)
         self.serializer = BikeSerializer(instance=self.bike)
 
-    def test_float(self):
+    # def test_float(self):
 
-        bike = Bike.objects.filter().first()
+    #     bike = Bike.objects.filter().first()
 
-        s = BikeSerializer(instance=bike, data={'size': 40})
+    #     s = BikeSerializer(instance=bike, data={'size': 40})
 
-        s.is_valid()
-        s.save()
+    #     s.is_valid()
+    #     s.save()
 
-        bike = Bike.objects.filter().first()
+    #     bike = Bike.objects.filter().first()
 
         # self.false()
 

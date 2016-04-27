@@ -129,7 +129,7 @@ from bikes.endpoints import BikeListView
 
 class BikeListTest(APITestCase):
 
-    def test_bike_list_url(self):
+    def test_list_url(self):
         resolver = resolve('/api/bikes/')
         self.assertEqual(resolver.func.__name__, BikeListView.__name__)
     </code></pre>
@@ -185,7 +185,7 @@ urlpatterns = [
 class BikeListTest(APITestCase):
     view_class = BikeListView
 
-    def test_bike_list_url(self):
+    def test_list_url(self):
         resolver = resolve('/api/bikes/')
         self.assertEqual(resolver.func.__name__, self.view_class.__name__)
     </code></pre>
@@ -197,7 +197,7 @@ class BikeListTest(APITestCase):
     <pre><code data-trim>
 # test_endpoints.py
 
-    def test_bike_list_url_name(self):
+    def test_list_url_name(self):
         resolver = resolve('/api/bikes/')
         self.assertEqual(resolver.url_name, 'bikes-list')
     </code></pre>
@@ -230,7 +230,7 @@ class BikeListTest(APITestCase):
 
     ...
 
-    def test_bike_list_url_name(self):
+    def test_list_url_name(self):
         resolver = resolve('/api/bikes/')
         self.assertEqual(resolver.url_name, self.view_name)
     </code></pre>
@@ -255,7 +255,7 @@ class Bike(models.Model):
     <pre><code data-trim>
 # test_endpoints.py
 
-    def test_bike_list_returns_200(self):
+    def test_list_returns_200(self):
         response = self.client.get(reverse(self.view_name))
 
         self.assertEqual(response.status_code, status.status)
@@ -284,8 +284,13 @@ class BikeListView(ListAPIView):
     <pre><code data-trim>
 # test_endpoints.py
 
-    def test_bike_list_returns_a_list(self):
-        response = self.client.get(reverse(self.view_name))
+from rest_framework.test import APITestCase, APIRequestFactory
+
+factory = APIRequestFactory()
+
+    def test_list_returns_a_list(self):
+        request = factory.get('', self.bike_data)
+        response = self.view(request)
 
         self.assertIsInstance(response.data, list)
     </code></pre>
@@ -323,7 +328,7 @@ class BikeListView(ListAPIView):
 
 from bikes.serializers import BikeSerializer
 ...
-    def test_bike_list_uses_bike_serializer(self):
+    def test_list_uses_bike_serializer(self):
         self.assertEqual(self.view_class().get_serializer_class(),
             BikeSerializer)
     </code></pre>
@@ -349,7 +354,7 @@ from bikes.serializers import BikeSerializer
 
 from bikes.serializers import BikeSerializer
 ...
-    def test_bike_list_uses_bike_serializer(self):
+    def test_list_uses_bike_serializer(self):
         self.assertEqual(self.view_class().get_serializer_class(),
             None)
     </code></pre>
@@ -359,7 +364,7 @@ from bikes.serializers import BikeSerializer
 
 from bikes.serializers import BikeSerializer
 ...
-    def test_bike_list_uses_bike_serializer(self):
+    def test_list_uses_bike_serializer(self):
         self.assertEqual(self.view_class().get_serializer_class(),
             BikeSerializer)
     </code></pre>
@@ -645,12 +650,12 @@ class BikeListView(ListCreateAPIView):
     <p>Test correctly creates database object</p>
     <pre><code data-trim>
 # test_endpoints.py
+
 from bikes.models import Bike
 
-...
-
-    def test_create_bike_correctly_saves_to_db(self):
-        self.client.post(reverse(self.view_name), self.bike_data)
+    def test_create_correctly_saves_to_db(self):
+        request = factory.post('', self.bike_data)
+        self.view(request)
 
         bikes = Bike.objects.all()
 
@@ -783,13 +788,164 @@ class BikeSerializer(serializers.ModelSerializer):
     <pre><code data-trim>
 # models.py
 
-    COLOR_OPTIONS = (('yellow', 'yellow'), ('red', 'Red'), ('grey', 'Grey'))
+    COLOR_OPTIONS = (('yellow', 'Yellow'), ('red', 'Red'), ('grey', 'Grey'))
 
     color = models.CharField(max_length=255, null=True, blank=True,
         choices=COLOR_OPTIONS)
     </code></pre>
 </section>
 
+<section>
+    <h3>Endpoints <div class="status-green"></div></h3>
+    <p>Test endpoint returns errors</p>
+    <pre><code data-trim>
+# test_endpoints.py
+
+    def test_create_returns_400_on_errors(self):
+        self.bike_data['color'] = 'wrong color value'
+        self.bike_data['size'] = 1
+
+        request = factory.post('', self.bike_data)
+        response = self.view(request)
+
+        self.assertEqual(response.status_code,
+            status.HTTP_400_BAD_REQUEST)
+        # we know we have to fix the test when adding new field
+        self.assertEqual(len(response.data.keys()),
+            len(self.bike_data.keys()))
+        # we know that the fields we expected where in the error list
+        self.assertEqual(set(response.data.keys()),
+            set(['color', 'size']))
+    </code></pre>
+</section>
+
+<section class="section-slide">
+    <h2>OMG!!!!!!11ONE<br>
+    We forgot that only loged users can access our endpoints!</h2>
+</section>
+
+<section>
+    <h3>Permissions <div class="status-red"></div></h3>
+    <p>Lets prevent unauth users from accessing</p>
+    <pre><code data-trim>
+# endpoints.py
+
+from rest_framework.permissions import IsAuthenticated
+
+class BikeListView(ListCreateAPIView):
+    serializer_class = BikeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Bike.objects.all()
+    </code></pre>
+    <pre><code>AssertionError: 0 != 1</code></pre>
+    <pre><code>AssertionError: 403 != 400</code></pre>
+    <pre><code>ssertionError: {'detail': 'Authentication credentials were not provided.'} is not instance of list</code></pre>
+</section>
+
+<section>
+    <h3>Permissions <div class="status-red"></div></h3>
+    <pre><code data-trim>
+# test_endpoints.py
+
+from django.contrib.auth.models import User
+from rest_framework.test import force_authenticate
+
+    def setUp(self):
+        self.user = User.objects.create(username='theuser')
+        ...
+
+    # Add force_authenticate to the tests that use `factory`
+
+        force_authenticate(request, user=self.user)
+
+    ...
+
+        force_authenticate(request, user=self.user)
+    </code></pre>
+    <pre><code>AssertionError: 403 != 201</code></pre>
+</section>
+
+<section>
+    <h3>Permissions <div class="status-green"></div></h3>
+    <pre><code data-trim>
+# test_endpoints.py
+
+from rest_framework.test import APIClient
+
+    def setUp(self):
+        ...
+        self.auth_client = APIClient()
+        self.auth_client.force_authenticate(user=self.user)
+
+    def test_list_returns_200(self):
+        response = self.auth_client.get(reverse(self.view_name))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_create_bike_returns_201(self):
+        response = self.auth_client.post(reverse(self.view_name), self.bike_data)
+
+        self.assertEqual(response.status_code,
+            status.HTTP_201_CREATED)
+    </code></pre>
+</section>
+
+<section class="section-slide">
+    <h2>Now we are missing tests for failing permission</h2>
+</section>
+
+<section>
+    <h3>Permissions <div class="status-green"></div></h3>
+    <pre><code data-trim>
+# test_endpoints.py
+
+    def test_list_returns_403_if_not_authorized(self):
+        response = self.client.get(reverse(self.view_name))
+
+        self.assertEqual(response.status_code,
+            status.HTTP_403_FORBIDDEN)
+
+    def test_create_returns_403_if_not_authorized(self):
+        response = self.client.post(reverse(self.view_name), self.bike_data)
+
+        self.assertEqual(response.status_code,
+            status.HTTP_403_FORBIDDEN)
+    </code></pre>
+</section>
+
+<section>
+    <h3>Reviewing general tests</h3>
+    <ul>
+        <li>Make sure tests fail before passing</li>
+        <li>Try to tuch the minimun amount of code as possible in your tests</li>
+        <li>Have controll of the data you are testing (Make sure your test verifies the things you expected to work and the things you expected to break)</li>
+    </ul>
+</section>
+
+<section>
+    <h3>Reviewing endpoint tests</h3>
+    <ul>
+        <li>Test if things connect</li>
+            <li class="ident1">URL/view</li>
+            <li class="ident1">view_name/URL</li>
+            <li class="ident1">view/serializer</li>
+        <li>Test valid requests (at least one for each HTTP method)</li>
+        <li>Test invalid requests (at least one for each HTTP method)</li>
+        <li>Test authorization for each endpoint</li>
+    </ul>
+</section>
+
+<section>
+    <h3>Reviewing serializer tests</h3>
+    <ul>
+        <li>Test you know exactly what are the fields being returned</li>
+        <li>Test each field separatelly</li>
+        <li>Test fields return the correct data type</li>
+        <li>Test edge cases</li>
+    </ul>
+</section>
 
 <!-- /Unit testing -->
 

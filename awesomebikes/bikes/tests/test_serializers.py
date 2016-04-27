@@ -59,4 +59,3 @@ class BikeSerializerTests(APITestCase):
 
         self.assertFalse(serializer.is_valid())
         self.assertEqual(set(serializer.errors.keys()), set(['color']))
-

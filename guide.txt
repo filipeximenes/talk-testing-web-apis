@@ -27,15 +27,14 @@ OK            - includes all the desired fields
 OK            - test the behaviour of each field separately
             - test validations (required fields)
 OK            - never compare the whole structure of the JSON object. This makes tests break unnecessarily for any changes on the serializer and  makes it hard to spot at what field the error occurred (show example)
-            - test edge cases (numbers, dates, string sizes, sending an float to a decimal, sending a decimal to a float)
+OK            - test edge cases (numbers, dates, string sizes, sending an float to a decimal, sending a decimal to a float)
             - how to test file fields
             - test serializer method field
             - how to test hypermedia
             - test relationships
     - authentication endpoints
-    - permissions
+OK    - permissions
         - auth_client pattern
-        - not accessible resources should return 404 unless you want the user to know they exist
     - pagination
     - filtering
         - test_num_queries
@@ -56,16 +55,22 @@ OK            - never compare the whole structure of the JSON object. This makes
 
 
 Unit test review:
-- Unit test if things connect (URL - View, view_name - URL, View - serializer)
-- Always test each field separatelly
+- Make sure tests fail before passing
+- Try to tuch the minimun amount of code as possible in your tests
+- Have controll of the data you are testing. Make sure your test verifies the things you expected to work and the things you expected to break
+
 - Always test you know exactly what are the fields being returned
-- Test at least one valid request for each HTTP method (verify database changes)
+- Always test each field separatelly
 - Test fields return the correct data type
 - Test number bounds
 - Test valid options
-- Test invalid requests
+
+- Test if things connect (URL - View, view_name - URL, View - serializer)
+- Test valid requests (at least one for each HTTP method)
+- Test invalid requests (at least one for each HTTP method)
+- Test authorization for each endpoint
+
 
 All tests review:
-- Make sure tests fail before passing
 - Keep tests simple
 - Keep tests fast
