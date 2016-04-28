@@ -24,9 +24,39 @@
     <body>
         <div class="reveal">
             <div class="slides">
-<section>
+
+<section class="section-slide" data-background="assets/vinta/2.jpg">
     <h1>Testing your<br>web API</h1>
-    <h2>Filipe Ximenes (@xima)</h2>
+    <h2 class="subtitle">Filipe Ximenes (@xima)</h2>
+</section>
+
+<section class="section-slide" data-background="assets/vinta/2.jpg">
+    <h3>Quién soy yo?</h3>
+    <h4>Filipe Ximenes (@xima)</h4>
+    <h4>www.vinta.com.br</h4>
+    <h4>4 años en la comunidad Python</h4>
+    <h4>Web/Django/Python/JS</h4>
+    <h4>APIs</h4>
+</section>
+
+<section>
+    <h3>Recife</h3>
+    <img src="assets/recife.png" style="height: 533px;">
+</section>
+
+<section>
+    <h3>Gracias!</h3>
+    <img src="assets/asado.png" style="height: 533px;">
+</section>
+
+<section>
+    <h3>Gracias!</h3>
+    <img src="assets/swords.png" style="height: 533px;">
+</section>
+
+<section>
+    <h3>Gracias!</h3>
+    <img src="assets/fernet.png" style="height: 533px;">
 </section>
 
 <section>
@@ -57,15 +87,17 @@
 </section>
 
 <!-- TDD -->
-<section class="section-slide">
+<section class="section-slide" data-background="assets/vinta/2.jpg">
     <h2>TDD approach</h2>
 </section>
+
 <section>
     <h3>TDD approach</h3>
     <blockquote cite="https://www.techopedia.com/definition/25850/test-driven-development-tdd">
         &ldquo;Test driven development (TDD) is an software development approach in which a test is written before writing the code. Once the new code passes the test, it is refactored to an acceptable standard.&rdquo;
     </blockquote>
 </section>
+
 <section>
     <h3>TDD approach</h3>
     <ul>
@@ -75,6 +107,7 @@
         <li>Loop back</li>
     </ul>
 </section>
+
 <section>
     <h3>TDD approach</h3>
     <ul>
@@ -93,7 +126,7 @@
 
 <!-- TestCase -->
 <div class="comment">
-<section class="section-slide">
+<section class="section-slide" data-background="assets/vinta/2.jpg">
     <h2>Test framework</h2>
     <h3>Python TestCase</h3>
 </section>
@@ -102,7 +135,7 @@
 
 <!-- Mocking -->
 <div class="comment">
-<section class="section-slide">
+<section class="section-slide" data-background="assets/vinta/2.jpg">
     <h2>Mocking</h2>
 </section>
 <section>
@@ -111,10 +144,8 @@
 </div>
 <!-- /Mocking -->
 
-<!-- Unit testing -->
-<section class="section-slide">
-    <h2>Unit testing</h2>
-    <h3>Endpoints</h3>
+<section class="section-slide" data-background="assets/vinta/2.jpg">
+    <h2>Unit tests</h2>
 </section>
 
 <section>
@@ -334,7 +365,7 @@ from bikes.serializers import BikeSerializer
     </code></pre>
 </section>
 
-<section class="section-slide">
+<section class="section-slide section-slide-black">
     <h2>DANGER</h2>
     <div class="status-red"></div>
     <div class="status-red"></div>
@@ -539,7 +570,7 @@ class BikeSerializerTests(APITestCase):
     </code></pre>
 </section>
 
-<section class="section-slide">
+<section class="section-slide section-slide-black">
     <h2>DANGER</h2>
     <div class="status-red"></div>
     <div class="status-red"></div>
@@ -682,7 +713,7 @@ from bikes.models import Bike
     </ul>
 </section>
 
-<section class="section-slide">
+<section class="section-slide" data-background="assets/vinta/2.jpg">
     <h2>Testing fields</h2>
 </section>
 
@@ -819,7 +850,7 @@ class BikeSerializer(serializers.ModelSerializer):
     </code></pre>
 </section>
 
-<section class="section-slide">
+<section class="section-slide-black section-slide">
     <h2>OMG!!!!!!11ONE<br>
     We forgot that only loged users can access our endpoints!</h2>
 </section>
@@ -892,8 +923,8 @@ from rest_framework.test import APIClient
     </code></pre>
 </section>
 
-<section class="section-slide">
-    <h2>Testing permission</h2>
+<section class="section-slide" data-background="assets/vinta/2.jpg">
+    <h2>Testing permissions</h2>
 </section>
 
 <section>
@@ -947,7 +978,7 @@ from rest_framework.test import APIClient
     </ul>
 </section>
 
-<section class="section-slide">
+<section class="section-slide" data-background="assets/vinta/2.jpg">
     <h2>Testing with external calls</h2>
 </section>
 
@@ -1012,13 +1043,90 @@ import vcr
     </code></pre>
 </section>
 
+<section class="section-slide" data-background="assets/vinta/2.jpg">
+    <h2>Functional tests</h2>
+</section>
 
-<!-- /Unit testing -->
+<section>
+    <h3>Frisby.js</h3>
+    <pre><code>npm install --save-dev frisby</code></pre>
+    <pre><code data-trim>
+var url = 'http://localhost:8000/api'
+
+frisby.create('List bikes')
+  .get(url + '/bikes/')
+  .expectStatus(200)
+.toss()
+    </code></pre>
+</section>
+
+<section>
+    <h3>Tapioca</h3>
+    <pre><code>pip install tapioca-wrapper</code></pre>
+    <pre><code data-trim>
+from tapioca import (
+    TapiocaAdapter, generate_wrapper_from_adapter, JSONAdapterMixin)
+from requests.auth import HTTPBasicAuth
+
+class AwesomebikesClientAdapter(JSONAdapterMixin, TapiocaAdapter):
+    api_root = 'http://localhost:8000/api/'
+    resource_mapping = {'bikes': {'resource': 'bikes/'}}
+
+    def get_request_kwargs(self, api_params, *args, **kwargs):
+        params = super(AwesomebikesClientAdapter, self).get_request_kwargs(
+            api_params, *args, **kwargs)
+
+        params['auth'] = HTTPBasicAuth(
+            api_params.get('user'), api_params.get('password'))
+
+        return params
+
+Awesomebikes = generate_wrapper_from_adapter(AwesomebikesClientAdapter)
+    </code></pre>
+</section>
+
+<section>
+    <h3>Postman</h3>
+    <img src="assets/postman.png" style="height: 533px;">
+</section>
+
+<section>
+    <h3>Runscope</h3>
+    <ul>
+        <li>Continuous tests for live APIs</li>
+        <li>Test integrations</li>
+            <li class="ident1"><a href="https://www.runscope.com/docs/request-capture" target="_blank">Capture requests</a></li>
+            <li class="ident1"><a href="https://github.com/Runscope/requests-runscope" target="_blank">Requests plugin</a></li>
+    </ul>
+</section>
+
+<section class="section-slide" data-background="assets/vinta/2.jpg">
+    <h2>Tips and Tricks</h2>
+</section>
+
+<section>
+    <h3>Tips and Tricks</h3>
+    <ul>
+        <li>Log everything</li>
+        <li>Test client calls with <a href="http://requestb.in/">RequestBin</a></li>
+        <li>Access APIs running in localhost <a href="https://ngrok.com/">ngrok</a></li>
+        <li>Create apps using your API to try it in real world situations</li>
+        <li>Test your documentation</li>
+    </ul>
+</section>
+
+<section class="section-slide" data-background="assets/vinta/2.jpg">
+    <h1>Gracias!</h1>
+    <h2 class="subtitle">Preguntas?</h2>
+    <h4>@xima</h4>
+    <h4>github.com/filipeximenes</h4>
+    <h4>ximenes@vinta.com.br</h4>
+</section>
 
 
 <!-- Templates -->
 <div class="comment">
-<section class="section-slide">
+<section class="section-slide" data-background="assets/vinta/2.jpg">
     <h2></h2>
 </section>
 
@@ -1044,6 +1152,19 @@ import vcr
                 center: false,
                 progress: false,
                 controls: false,
+
+                // Normal
+                // width: 960,
+                // height: 700,
+
+                // Widescreen
+                // width: 1024,
+                // height: 764,
+
+                transition: 'slide',
+                // transitionSpeed: 'fast',
+                backgroundTransition: 'slide',
+
 
                 // More info https://github.com/hakimel/reveal.js#dependencies
                 dependencies: [

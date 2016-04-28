@@ -7,6 +7,7 @@ from rest_framework import status
 from bikes.models import Bike
 from bikes.endpoints import BikeListView
 from bikes.serializers import BikeSerializer
+
 import responses
 import vcr
 

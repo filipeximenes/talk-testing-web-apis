@@ -11,14 +11,22 @@
  * GLOBAL STYLES
  *********************************************/
 body {
-  background: #000;
+  background: url(vinta/3.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto 100%;
   background-color: #000; }
 
 .reveal {
   font-family: "Lato", sans-serif;
   font-size: 36px;
   font-weight: normal;
-  color: #fff; }
+  color: #000; }
+
+.reveal .slide-background {
+  background-size: auto 100%;
+}
 
 ::selection {
   color: #fff;
@@ -40,7 +48,7 @@ body {
 .reveal h5,
 .reveal h6 {
   margin: 0 0 20px 0;
-  color: #fff;
+  color: #000;
   font-family: "News Cycle", Impact, sans-serif;
   font-weight: normal;
   line-height: 1.2;
@@ -72,12 +80,42 @@ body {
   display: none;
 }
 
+/*.reveal section.section-slide {
+  background: url(vinta/2.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto 100%;
+}*/
+
+.reveal section.section-slide h1,
+.reveal section.section-slide h2,
+.reveal section.section-slide h3,
+.reveal section.section-slide h4,
+.reveal section.section-slide h5,
+.reveal section.section-slide h6 {
+  color: #fff;
+}
+
+.reveal section.section-slide .subtitle {
+  margin-top: 1em;
+}
+
 .reveal section.section-slide h2 {
   margin-top: 2.5em;
 }
 
 .reveal section.section-slide h3 {
   text-align: center;
+}
+
+.reveal section.section-slide-black h1,
+.reveal section.section-slide-black h2,
+.reveal section.section-slide-black h3,
+.reveal section.section-slide-black h4,
+.reveal section.section-slide-black h5,
+.reveal section.section-slide-black h6 {
+  color: #000 !important;
 }
 
 .reveal div.status-green {
@@ -262,10 +300,11 @@ body {
  * IMAGES
  *********************************************/
 .reveal section img {
-  margin: 15px 0px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 4px solid #000;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); }
+  /*margin: 15px 0px;*/
+  /*background: rgba(255, 255, 255, 0.12);*/
+  /*border: 4px solid #000;*/
+  /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); */
+}
 
 .reveal section img.plain {
   border: 0;

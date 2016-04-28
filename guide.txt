@@ -39,6 +39,7 @@ OK    - permissions
     - filtering
         - test_num_queries
 OK    - integration to external services
+        - mock
          - make sure they are easily mockeable functions)
          - use responses
          - vcrpy (https://github.com/kevin1024/vcrpy) (https://github.com/agriffis/vcrpy-unittest)
@@ -46,16 +47,21 @@ OK    - integration to external services
     - tools
         - model-mommy
 - Functional tests
-    - try to consume your API using JS for a real world test
-    - Postman (also very util to debug)
+OK    - http://frisbyjs.com/
+OK    - Postman (also very util to debug)
+OK    - Runscope
+        - Continuous tests for live APIs
+        - Test integrations https://www.runscope.com/docs/request-capture (https://github.com/Runscope/requests-runscope)
     - stress testing
-    - Runscope
-    - use logs for easy tracing back and debugging
-    - regression test things that failed
-    - test your documentation!
+
+- Use logs for easy tracing back and debugging
+- Test client calls http://requestb.in/
+- Access APIs running in localhost https://ngrok.com/
+- create apps using your API to try it in real world situations
+- test your documentation!
 
 
-Unit test review:
+OK Unit test review:
 - Make sure tests fail before passing
 - Try to tuch the minimun amount of code as possible in your tests
 - Have controll of the data you are testing. Make sure your test verifies the things you expected to work and the things you expected to break
