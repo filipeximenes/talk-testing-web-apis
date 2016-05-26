@@ -54,11 +54,11 @@ OK    - Runscope
         - Test integrations https://www.runscope.com/docs/request-capture (https://github.com/Runscope/requests-runscope)
     - stress testing
 
-- Use logs for easy tracing back and debugging
-- Test client calls http://requestb.in/
-- Access APIs running in localhost https://ngrok.com/
-- create apps using your API to try it in real world situations
-- test your documentation!
+OK - Use logs for easy tracing back and debugging
+OK - Test client calls http://requestb.in/
+OK - Access APIs running in localhost https://ngrok.com/
+OK - create apps using your API to try it in real world situations
+OK - test your documentation!
 
 
 OK Unit test review:
